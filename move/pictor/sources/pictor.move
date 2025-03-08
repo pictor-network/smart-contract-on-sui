@@ -24,7 +24,8 @@ public struct AdminCap has key, store {
 /// Represents a job record
 public struct JobRecord has store, drop {    
     owner: address,    
-    user_id: u64,
+    guid: String,
+    user_id: String,
     job_type_id: u64,
     time_out: u64,
     status: u64,
@@ -183,6 +184,7 @@ public fun create_admin_cap_test(service_id: ID, ctx: &mut TxContext): AdminCap 
 public fun create_new_user(
     service: &mut Service,
     owner: address,
+    guid: String,
     full_name: String,
     email_address: String,
     user_role: String,
@@ -192,6 +194,7 @@ public fun create_new_user(
 ): ID {
     let item = user::new_user(
         owner,
+        guid,
         full_name,
         email_address,
         user_role,
@@ -294,14 +297,16 @@ public fun remove_asset(
 public fun create_new_job(
     service: &mut Service,
     owner: address,
+    guid: String,
     content: String,
-    user_id: u64,
+    user_id: String,
     job_type_id: u64,
     estimated_cost: u64,        
     ctx: &mut TxContext
 ): ID {
     let item = job::new_job(
         owner,        
+        guid,
         content,
         user_id,
         job_type_id,
@@ -326,6 +331,7 @@ fun add_job(
     owner: address    
 ) {
     let job_id = job.get_id();
+    let guid = job.get_guid();
     let user_id = job.get_user_id();
     let job_type_id = job.get_job_type_id();
     let time_out = job.get_time_out();
@@ -334,7 +340,7 @@ fun add_job(
 
     service.jobs.add(job_id, job);    
 
-    df::add(&mut service.id, job_id, JobRecord { owner, user_id, job_type_id, time_out, status, estimated_cost });    
+    df::add(&mut service.id, job_id, JobRecord { owner, guid, user_id, job_type_id, time_out, status, estimated_cost });    
 
 }
 
@@ -353,7 +359,7 @@ public fun remove_job(
 public fun update_job(    
     service: &mut Service,
     job_id: ID,
-    user_id: u64,
+    user_id: String,
     job_type_id: u64,
     time_out: u64,
     status: u64,

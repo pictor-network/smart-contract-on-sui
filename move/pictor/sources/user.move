@@ -5,6 +5,7 @@ use std::string::String;
 public struct User has key, store {
     id: UID,
     owner: address,        
+    guid: String,
     full_name: String,
     email_address: String,
     user_role: String,
@@ -16,6 +17,7 @@ public struct User has key, store {
 //create new user
 public(package) fun new_user(    
     owner: address,
+    guid: String,
     full_name: String,
     email_address: String,
     user_role: String,
@@ -26,6 +28,7 @@ public(package) fun new_user(
     User {
         id: object::new(ctx),        
         owner,
+        guid,
         full_name,
         email_address,
         user_role,

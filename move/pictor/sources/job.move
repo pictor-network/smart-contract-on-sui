@@ -8,9 +8,10 @@ const MAX_CONTENT_LEN: u64 = 1000;
 
 public struct Job has key, store {
     id: UID,
-    owner: address,        
+    owner: address,
+    guid: String,        
     content: String,
-    user_id: u64,
+    user_id: String,
     job_type_id: u64,
     time_out: u64,
     status: u64,
@@ -21,8 +22,9 @@ public struct Job has key, store {
 //create new job
 public(package) fun new_job(    
     owner: address,
-    content:String,       
-    user_id: u64,
+    content:String,
+    guid: String,       
+    user_id: String,
     job_type_id: u64,
     estimated_cost: u64,      
     ctx: &mut TxContext
@@ -33,6 +35,7 @@ public(package) fun new_job(
         id: object::new(ctx),        
         owner,        
         content,
+        guid,
         user_id,
         job_type_id,
         time_out: 0,
@@ -48,6 +51,7 @@ public(package) fun delete_job(job: Job) {
         id,
         owner: _,        
         content: _,
+        guid: _,
         user_id: _,
         job_type_id: _,
         time_out: _,
@@ -59,7 +63,7 @@ public(package) fun delete_job(job: Job) {
 }
 
 /// update job
-public fun update_job(job: &mut Job, user_id: u64, job_type_id: u64, time_out: u64, status: u64, estimated_cost: u64 ){
+public fun update_job(job: &mut Job, user_id: String, job_type_id: u64, time_out: u64, status: u64, estimated_cost: u64 ){
     job.user_id = user_id;
     job.job_type_id = job_type_id;
     job.time_out = time_out;
@@ -82,8 +86,14 @@ public fun get_id(job: &Job): ID {
     job.id.to_inner()
 }
 
+// return job id
+public fun get_guid(job: &Job): String {
+    job.guid
+}
+
+
 // return user_id
-public fun get_user_id(job: &Job): u64 {
+public fun get_user_id(job: &Job): String {
     job.user_id
 }
 
